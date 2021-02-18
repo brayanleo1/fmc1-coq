@@ -36,14 +36,14 @@ Proof. simpl. reflexivity.  Qed.
 Fixpoint times_nat (m n : nat) : nat :=
   match n with
   | O => O
-  | S n' => n' + (times_nat m n')
+  | S n' => m + (times_nat m n')
 end.
 
 Notation "a * b" := (times_nat a b).
 
 (*x4.7*)
 Example x4_6: S(S O) * (O + S O)  = S(S O).
-Proof. simpl. reflexivity.  Qed. (*Precisa-se de concerto*)
+Proof. simpl. reflexivity.  Qed.
 
 Fixpoint exp_nat (m n : nat) : nat :=
   match n with
