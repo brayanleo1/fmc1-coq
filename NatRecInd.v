@@ -137,6 +137,22 @@ Proof.
     reflexivity.
 Qed.
 
+Theorem times_suc : forall m n : nat, S m * n = (m * n) + n.
+Proof.
+  intro m.
+  intro n.
+  induction n as [| n' HIn'].
+  - simpl. 
+    reflexivity.
+  - simpl.
+    rewrite -> HIn'.
+    rewrite -> plus_ass. 
+    admit. (*
+    apply plus_com with [n' | m].
+    rewrite <- plus_ass.
+    reflexivity.*)
+Admitted.
+
 (*x4.15*)
 Theorem times_com : forall m n : nat, m * n = n * m.
 Proof.
@@ -149,20 +165,26 @@ Proof.
     rewrite <- HIm'. 
     simpl. 
     reflexivity.
-  - induction m as [| m' HIm'].
-    * simpl. 
+  - simpl. 
     rewrite -> HIn'. 
-    simpl. 
+    rewrite -> times_suc. 
     reflexivity.
-    * simpl. (*Continua...*)
-    rewrite -> HIn'.
-    simpl.
-    rewrite -> plus_com.
-    simpl in HIn'.
-    rewrite <- HIn'.
-    simpl.
 Qed.
+
 (*x4.14*)
+Theorem times_ass : forall m n k : nat, (m * n) * k = m * (n * k).
+Proof.
+  intro m.
+  intro n.
+  intro k.
+  induction k as [| k' HIk'].
+  - simpl. 
+    reflexivity.
+  - simpl. 
+    rewrite -> dist. 
+    rewrite -> HIk'. 
+    reflexivity.
+Qed.
 
 
 End coq_fmc1.
