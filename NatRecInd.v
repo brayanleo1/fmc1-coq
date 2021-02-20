@@ -186,5 +186,83 @@ Proof.
     reflexivity.
 Qed.
 
+Theorem times_id1 : forall m : nat, m * S O = m.
+Proof.
+  intro m.
+  simpl.
+  rewrite -> plus_com.
+  simpl.
+  reflexivity.
+Qed.
+
+Theorem times_id2 : forall m : nat, S O * m = m.
+Proof.
+  intro m.
+  rewrite -> times_com.
+  rewrite -> times_id1.
+  reflexivity.
+Qed.
+
+(*x4.17*)
+Theorem exp_law1 : forall x a b : nat, x^(a+b) = (x^a) * (x^b).
+Proof.
+  intro x.
+  intro a.
+  intro b.
+  induction b as [| b' HIb'].
+  - simpl.
+    rewrite -> plus_com.
+    simpl.
+    reflexivity.
+  - simpl.
+    rewrite -> HIb'.
+    rewrite <- times_ass.
+    reflexivity.
+Qed.
+
+(*x4.18*)
+Theorem exp_law2 : forall a b c : nat, a^(b * c) = (a^b)^c.
+Proof.
+  intro a.
+  intro b.
+  intro c.
+  induction c as [| c' HIc'].
+  - simpl. 
+    reflexivity.
+  - simpl.
+    rewrite -> exp_law1.
+    rewrite -> HIc'.
+    reflexivity.
+Qed.
+
+(*x4.19*)
+Theorem exp_law3 : forall n : nat, S O ^ n = S O.
+Proof.
+  intro n.
+  induction n as [| n' HIn'].
+  - simpl. 
+    reflexivity.
+  - simpl.
+    rewrite -> plus_com.
+    simpl.
+    rewrite -> HIn'.
+    reflexivity.
+Qed.
+
+Fixpoint leq (m n : nat) : bool :=
+  match n with
+  | O => match m with
+    |O => true
+    |S m' => false end
+  | S n' => match m with
+    | O => true
+    | S m' => (leq m' n') end
+  end.
+
+Notation "a <= b" := (leq a b).
+
+(*x4.20*) (*Continua*)
+Theorem leq_suc : forall m n : nat, (n = S m) <-> n <= m or n = m.
+
 
 End coq_fmc1.
