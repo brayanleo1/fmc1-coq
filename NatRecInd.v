@@ -146,12 +146,11 @@ Proof.
     reflexivity.
   - simpl.
     rewrite -> HIn'.
-    rewrite -> plus_ass. 
-    admit. (*
-    apply plus_com with [n' | m].
+    rewrite -> plus_ass.
+    rewrite -> (plus_com n' m).
     rewrite <- plus_ass.
-    reflexivity.*)
-Admitted.
+    reflexivity.
+Qed.
 
 (*x4.15*)
 Theorem times_com : forall m n : nat, m * n = n * m.
@@ -249,20 +248,40 @@ Proof.
     reflexivity.
 Qed.
 
-Fixpoint leq (m n : nat) : bool :=
+Fixpoint eq_nat (m n : nat) : bool :=
+  match n with
+    | O => match m with
+      | O => true
+      | S m' => false end
+    | S n' => match m with
+      | O => false
+      | S m' => (eq_nat m' n') end
+  end.
+
+Notation "a == b" := (eq_nat a b) (at level 70) : nat_scope.
+
+Fixpoint leq_nat (m n : nat) : bool :=
   match n with
   | O => match m with
     |O => true
     |S m' => false end
   | S n' => match m with
     | O => true
-    | S m' => (leq m' n') end
+    | S m' => (leq_nat m' n') end
   end.
 
-Notation "a <= b" := (leq a b).
+Notation "a <= b" := (leq_nat a b).
 
 (*x4.20*) (*Continua*)
-Theorem leq_suc : forall m n : nat, (n = S m) <-> n <= m or n = m.
+Theorem leq_suc : forall m n : nat, (n <= S m) = true  <-> ((n <= m)=true \/ (n = m)).
+Proof.
+  intro m.
+  intro n.
+  split.
+  - intro n_leq_Sm.
+    left.
+    destruct n_leq_Sm eq_nat:En.
+    auto.
 
 
 End coq_fmc1.
