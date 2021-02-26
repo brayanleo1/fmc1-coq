@@ -248,40 +248,33 @@ Proof.
     reflexivity.
 Qed.
 
-Fixpoint eq_nat (m n : nat) : bool :=
-  match n with
-    | O => match m with
-      | O => true
-      | S m' => false end
-    | S n' => match m with
-      | O => false
-      | S m' => (eq_nat m' n') end
-  end.
-
-Notation "a == b" := (eq_nat a b) (at level 70) : nat_scope.
-
-Fixpoint leq_nat (m n : nat) : bool :=
-  match n with
-  | O => match m with
-    |O => true
-    |S m' => false end
-  | S n' => match m with
-    | O => true
-    | S m' => (leq_nat m' n') end
-  end.
+Definition leq_nat (m n : nat) := exists k, m + k = n.
 
 Notation "a <= b" := (leq_nat a b).
 
 (*x4.20*) (*Continua*)
-Theorem leq_suc : forall m n : nat, (n <= S m) = true  <-> ((n <= m)=true \/ (n = m)).
+Theorem leq_suc : forall m n : nat, (n <= S m) <-> (n <= m \/ n = m).
 Proof.
   intro m.
   intro n.
   split.
   - intro n_leq_Sm.
     left.
-    destruct n_leq_Sm eq_nat:En.
-    auto.
+    destruct n_leq_Sm as [k h].
+    exists k.
+    apply h.
+    rewrite -> h.
+    intros.
+    right.
+    destruct n_leq_Sm as [k h].
+    induction n as [|n' Hn'].
+      * rewrite -> plus_com in h. simpl in h.
+    left.
+    destruct n_leq_Sm as [k h].
+    simpl.
+    induction n as [| n' HIn'].
+    simpl. intros.
+    simpl.
 
 
 End coq_fmc1.
