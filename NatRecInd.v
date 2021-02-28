@@ -259,22 +259,19 @@ Proof.
   intro n.
   split.
   - intro n_leq_Sm.
-    left.
     destruct n_leq_Sm as [k h].
+    left.
     exists k.
-    apply h.
     rewrite -> h.
-    intros.
-    right.
-    destruct n_leq_Sm as [k h].
-    induction n as [|n' Hn'].
-      * rewrite -> plus_com in h. simpl in h.
-    left.
-    destruct n_leq_Sm as [k h].
-    simpl.
-    induction n as [| n' HIn'].
-    simpl. intros.
-    simpl.
+    admit.
+  - intro n_leq_m_or_n_eq_m.
+    destruct n_leq_m_or_n_eq_m as [n_leq_m | n_eq_m].
+    * destruct n_leq_m as [k i].
+      exists k.
+      rewrite -> i.
+      admit.
+    * rewrite -> n_eq_m.
+
 
 
 End coq_fmc1.
