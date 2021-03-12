@@ -248,29 +248,148 @@ Proof.
     reflexivity.
 Qed.
 
-Definition leq_nat (m n : nat) := exists k, m + k = n.
+Definition leq_nat (m n : nat) := exists (k : nat), m + k = n.
 
 Notation "a <= b" := (leq_nat a b).
 
-(*x4.20*) (*Continua*)
-Theorem leq_suc : forall m n : nat, (n <= S m) <-> (n <= m \/ n = m).
+
+(*x4.20*)
+Theorem leq_suc : forall m n : nat, (n <= S m) <-> (n <= m \/ n = S m).
 Proof.
   intro m.
   intro n.
   split.
   - intro n_leq_Sm.
-    destruct n_leq_Sm as [k h].
-    left.
-    exists k.
-    rewrite -> h.
+    destruct n_leq_Sm as [k kpn_eq_Sm].
+    destruct k as [ | k'].
+    * right.
+      simpl in kpn_eq_Sm.
+      rewrite <- kpn_eq_Sm.
+      reflexivity.
+    * left.
+      exists k'.
+      simpl in kpn_eq_Sm.
+      inversion kpn_eq_Sm.
+      reflexivity.
+  - intro n_leq_m_or_n_eq_Sm.
+    destruct n_leq_m_or_n_eq_Sm as [n_leq_m | n_eq_Sm].
+    * destruct n_leq_m as [k npk_eq_m].
+      exists (S k).
+      inversion npk_eq_m.
+      simpl.
+      reflexivity.
+    * exists O.
+      simpl.
+      rewrite -> n_eq_Sm.
+      reflexivity.
+Qed.
+
+(*x4.21*)
+Theorem leq_refl : forall x : nat, x <= x.
+Proof.
+  intro x.
+  exists O.
+  simpl.
+  reflexivity.
+Qed.
+
+(*x4.22*)
+Theorem leq_ant_sym : forall x y : nat, (x <= y /\ y <= x) -> x = y.
+Proof.
+  intro x.
+  intro y.
+  intro x_leq_y_and_y_leq_x.
+  destruct x_leq_y_and_y_leq_x as [x_leq_y y_leq_x].
+  destruct x_leq_y as [k xpk_eq_y].
+  destruct y_leq_x as [i ypi_eq_x].
+  rewrite <- xpk_eq_y.
+  destruct k as [| k'].
+  - simpl.
+    reflexivity.
+  - rewrite -> xpk_eq_y.
     admit.
-  - intro n_leq_m_or_n_eq_m.
-    destruct n_leq_m_or_n_eq_m as [n_leq_m | n_eq_m].
-    * destruct n_leq_m as [k i].
-      exists k.
-      rewrite -> i.
-      admit.
-    * rewrite -> n_eq_m.
+Admitted.
+
+(*x4.23*)
+Theorem leq_trans : forall x y z : nat, (x <= y /\ y <= z) -> x <= z.
+Proof.
+  intro x.
+  intro y.
+  intro z.
+  intro x_leq_y_and_y_leq_z.
+  destruct x_leq_y_and_y_leq_z as [x_leq_y y_leq_z].
+  destruct x_leq_y as [k xpk_eq_y].
+  destruct y_leq_z as [i ypi_eq_z].
+  inversion ypi_eq_z.
+  inversion xpk_eq_y.
+  exists (k + i).
+  rewrite -> plus_ass.
+  reflexivity.
+Qed.
+
+Theorem leq_suc_suc : forall x y : nat, S x <= S y -> x <= y.
+Proof.
+  intro x.
+  intro y.
+  intro Sx_leq_Sy.
+  destruct Sx_leq_Sy as [k Sxpk_eq_Sy].
+  destruct k as [| k'].
+  - simpl in Sxpk_eq_Sy.
+    inversion Sxpk_eq_Sy.
+    exists O.
+    simpl.
+    reflexivity.
+  - inversion Sxpk_eq_Sy.
+  exists ((S O) + k').
+  rewrite <- plus_ass.
+  simpl.
+  reflexivity.
+Qed.
+
+(*x4.24*)
+Theorem leq_tot : forall x y : nat, (x <= y) \/ (y <= x).
+Proof.
+  intro x.
+  intro y.
+  induction y as [| y' HIy'].
+  - right.
+  exists x.
+  rewrite -> plus_com.
+  simpl.
+  reflexivity.
+  - destruct HIy' as [x_leq_y' | y'_leq_x].
+    *
+left.
+destruct x_leq_y' as [k xpk_eq_y].
+exists (k + (S O)).
+rewrite <- plus_ass.
+rewrite <- plus_com.
+rewrite -> xpk_eq_y.
+rewrite -> plus_com.
+simpl.
+reflexivity.
+    * induction x as [| x' HIx'].
+      + destruct y'_leq_x as [k x'pk_eq_y'].
+left. 
+exists (S y').
+rewrite -> plus_com.
+simpl.
+reflexivity.
+      + destruct y'_leq_x as [k x'pk_eq_y'].
+right.
+rewrite leq_suc_suc.
+destruct HIx' as [a | c].
+        -- exists k.
+inversion x'pk_eq_y'.
+rewrite -> x'pk_eq_y'.
+left.
+exists (S O).
+rewrite -> plus_com.
+simpl.
+
+
+
+
 
 
 
