@@ -293,6 +293,15 @@ Proof.
   reflexivity.
 Qed.
 
+Theorem suc_eq_suc : forall x y :nat, x = y -> S x = S y.
+Proof.
+  intro x.
+  intro y.
+  intro x_eq_y.
+  inversion x_eq_y.
+  reflexivity.
+Qed.
+
 (*x4.22*)
 Theorem leq_ant_sym : forall x y : nat, (x <= y /\ y <= x) -> x = y.
 Proof.
@@ -302,12 +311,28 @@ Proof.
   destruct x_leq_y_and_y_leq_x as [x_leq_y y_leq_x].
   destruct x_leq_y as [k xpk_eq_y].
   destruct y_leq_x as [i ypi_eq_x].
-  rewrite <- xpk_eq_y.
   destruct k as [| k'].
-  - simpl.
+  - simpl in xpk_eq_y.
+    apply xpk_eq_y.
+  - destruct i as [| i'].
+    * simpl in ypi_eq_x.
+    rewrite <- ypi_eq_x.
     reflexivity.
-  - rewrite -> xpk_eq_y.
-    admit.
+    * simpl in ypi_eq_x.
+      simpl in xpk_eq_y.
+      rewrite <- xpk_eq_y.
+      induction x as [| x' HIx'].
+      + rewrite -> xpk_eq_y.
+        discriminate.
+      + rewrite -> ypi_eq_x in HIx'.
+        rewrite -> plus_com.
+        simpl.
+        apply suc_eq_suc.
+        rewrite -> plus_com.
+        apply HIx'.
+        -- rewrite <- xpk_eq_y.
+          apply suc_eq_suc.
+      admit.
 Admitted.
 
 (*x4.23*)
