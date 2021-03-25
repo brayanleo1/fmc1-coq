@@ -252,6 +252,187 @@ Definition leq_nat (m n : nat) := exists (k : nat), m + k = n.
 
 Notation "a <= b" := (leq_nat a b).
 
+Definition less_nat (m n : nat) := exists (k : nat), m + S k = n.
+
+Notation "a < b" := (less_nat a b).
+
+(*P1 (∀x, y)[ x ≤ y => x < y ou x = y ] *)
+Theorem p1_1 : forall x y : nat, x <= y -> x < y \/ x = y.
+Proof.
+  intro x.
+  intro y.
+  intro x_leq_y.
+  destruct x_leq_y as [k xpk_eq_y].
+  destruct k as [| k'].
+  - right.
+    simpl in xpk_eq_y.
+    apply xpk_eq_y.
+  - left.
+    exists k'.
+    apply xpk_eq_y.
+Qed.
+
+(*P1 (∀x, y)[ x ≤ y <= x < y ou x = y ] *)
+Theorem p1_2 : forall x y : nat, x < y \/ x = y -> x <= y.
+Proof.
+  intro x.
+  intro y.
+  intro x_less_y_or_x_eq_y.
+  destruct x_less_y_or_x_eq_y as [x_less_y | x_eq_y].
+  - destruct x_less_y as [k xpk_eq_y].
+    exists (S k).
+    apply xpk_eq_y.
+  - exists O.
+    apply x_eq_y.
+Qed.
+
+(*P2 (∀a, x, y)[ x ≤ y =⇒ x^a ≤ y^a]*)
+Theorem p2_1 : forall a x y : nat, (x <= y) -> (x ^ a <= y ^ a).
+Proof.
+  intro a.
+  intro x.
+  intro y.
+  intro x_leq_y.
+  destruct x_leq_y as [k xpk_eq_y].
+  induction a as [| a' HIa'].
+  - simpl.
+    exists O.
+    reflexivity.
+  - destruct HIa' as [k' HIa'pk_eq_y].
+  simpl.
+  exists (x^a'*k + (k'*x + k'*k)).
+  rewrite <- (dist k' x k).
+  rewrite <- plus_ass.
+  rewrite <- dist.
+  rewrite <- times_com.
+  rewrite <- (times_com (x+k) k').
+  rewrite <- dist.
+  rewrite -> times_com.
+  rewrite -> HIa'pk_eq_y.
+  rewrite -> xpk_eq_y.
+  reflexivity.
+Qed.
+
+Definition par_nat (n : nat) := exists (k : nat), (S (S O)) * k = n.
+
+Definition impar_nat (n : nat) := exists (k : nat), (S (S O)) * k + S O = n.
+
+(*P3*)
+Theorem p3 : forall n : nat, (par_nat n) \/ (impar_nat n).
+  intro n.
+  induction n as [| n' HIn'].
+  - left.
+    exists O.
+    simpl.
+    reflexivity.
+  - destruct HIn' as [n'_par | n'_impar].
+    * destruct n'_par as [k n'_eq_k_par].
+      right.
+      exists k.
+      rewrite -> n'_eq_k_par.
+      simpl.
+      reflexivity.
+    * destruct n'_impar as [i n'_eq_i_impar].
+      left.
+      exists (i + (S O)).
+      rewrite -> dist.
+      simpl.
+      rewrite <- n'_eq_i_impar.
+      simpl.
+      reflexivity.
+Qed.Definition leq_nat (m n : nat) := exists (k : nat), m + k = n.
+
+Notation "a <= b" := (leq_nat a b).
+
+Definition less_nat (m n : nat) := exists (k : nat), m + S k = n.
+
+Notation "a < b" := (less_nat a b).
+
+(*P1 (∀x, y)[ x ≤ y => x < y ou x = y ] *)
+Theorem p1_1 : forall x y : nat, x <= y -> x < y \/ x = y.
+Proof.
+  intro x.
+  intro y.
+  intro x_leq_y.
+  destruct x_leq_y as [k xpk_eq_y].
+  destruct k as [| k'].
+  - right.
+    simpl in xpk_eq_y.
+    apply xpk_eq_y.
+  - left.
+    exists k'.
+    apply xpk_eq_y.
+Qed.
+
+(*P1 (∀x, y)[ x ≤ y <= x < y ou x = y ] *)
+Theorem p1_2 : forall x y : nat, x < y \/ x = y -> x <= y.
+Proof.
+  intro x.
+  intro y.
+  intro x_less_y_or_x_eq_y.
+  destruct x_less_y_or_x_eq_y as [x_less_y | x_eq_y].
+  - destruct x_less_y as [k xpk_eq_y].
+    exists (S k).
+    apply xpk_eq_y.
+  - exists O.
+    apply x_eq_y.
+Qed.
+
+(*P2 (∀a, x, y)[ x ≤ y =⇒ x^a ≤ y^a]*)
+Theorem p2_1 : forall a x y : nat, (x <= y) -> (x ^ a <= y ^ a).
+Proof.
+  intro a.
+  intro x.
+  intro y.
+  intro x_leq_y.
+  destruct x_leq_y as [k xpk_eq_y].
+  induction a as [| a' HIa'].
+  - simpl.
+    exists O.
+    reflexivity.
+  - destruct HIa' as [k' HIa'pk_eq_y].
+  simpl.
+  exists (x^a'*k + (k'*x + k'*k)).
+  rewrite <- (dist k' x k).
+  rewrite <- plus_ass.
+  rewrite <- dist.
+  rewrite <- times_com.
+  rewrite <- (times_com (x+k) k').
+  rewrite <- dist.
+  rewrite -> times_com.
+  rewrite -> HIa'pk_eq_y.
+  rewrite -> xpk_eq_y.
+  reflexivity.
+Qed.
+
+Definition par_nat (n : nat) := exists (k : nat), (S (S O)) * k = n.
+
+Definition impar_nat (n : nat) := exists (k : nat), (S (S O)) * k + S O = n.
+
+(*P3*)
+Theorem p3 : forall n : nat, (par_nat n) \/ (impar_nat n).
+  intro n.
+  induction n as [| n' HIn'].
+  - left.
+    exists O.
+    simpl.
+    reflexivity.
+  - destruct HIn' as [n'_par | n'_impar].
+    * destruct n'_par as [k n'_eq_k_par].
+      right.
+      exists k.
+      rewrite -> n'_eq_k_par.
+      simpl.
+      reflexivity.
+    * destruct n'_impar as [i n'_eq_i_impar].
+      left.
+      exists (i + (S O)).
+      rewrite -> dist.
+      simpl.
+      rewrite <- n'_eq_i_impar.
+      simpl.
+      reflexivity.
+Qed.
 
 (*x4.20*)
 Theorem leq_suc : forall m n : nat, (n <= S m) <-> (n <= m \/ n = S m).
@@ -411,11 +592,6 @@ left.
 exists (S O).
 rewrite -> plus_com.
 simpl.
-
-
-
-
-
 
 
 End coq_fmc1.
